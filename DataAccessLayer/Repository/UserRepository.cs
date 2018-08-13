@@ -1,4 +1,6 @@
-﻿using Domain.Model.Entities;
+﻿using DataAccessLayer.Extentions;
+using Domain.Model.Entities;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +20,10 @@ namespace DataAccessLayer.Repository
 
         public IList<User> GetUsers()
         {
-            using (var comand=_context.CreateCommand())
+            using (var command=_context.CreateCommand())
             {
-                comand.CommandText = "Get Query";
-                return this.Tolist(comand).ToList();
+                command.CommandText = "exec [dbo].[uspGetUsers]";
+                return this.Tolist(command).ToList();
             }
         }
 
@@ -30,12 +32,39 @@ namespace DataAccessLayer.Repository
             using (var command = _context.CreateCommand())
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.CommandText = "signup user query";
+                command.CommandText = "uspSignUp";
                 command.Parameters.Add(command.CreateParameter("@pFirstName", user.FirstName));
                 command.Parameters.Add(command.CreateParameter("@pLastName", user.LastName));
                 command.Parameters.Add(command.CreateParameter("@pUserName", user.UserName));
                 command.Parameters.Add(command.CreateParameter("@pPassword", user.Password));
                 command.Parameters.Add(command.CreateParameter("@pEmail", user.Email));
+                return this.Tolist(command).FirstOrDefault();
+            }
+        }
+
+        public User LoginUser(string id,string password)
+        {
+            using (var command = _context.CreateCommand())
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandText = "uspSignIn ";
+
+                command.Parameters.Add(command.CreateParameter("@pId", id));
+                command.Parameters.Add(command.CreateParameter("@pPassword", password));
+
+                return this.Tolist(command).FirstOrDefault();
+            }
+        }
+
+        public User GetUserByUserNameOrEmail(string userName,string email)
+        {
+            using (var command = _context.CreateCommand())
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandText = "uspGetUserByUsernameOrEmail";
+
+                command.Parameters.Add(command.CreateParameter("@pUserName",userName));
+                command.Parameters.Add(command.CreateParameter("@pEmail",email));
 
                 return this.Tolist(command).FirstOrDefault();
             }
