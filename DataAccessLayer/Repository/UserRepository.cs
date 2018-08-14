@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repository
 {
-    class UserRepository : Repository<User>
+    public class UserRepository : Repository<User>
     {
         private DbContext _context;
 
@@ -23,7 +23,8 @@ namespace DataAccessLayer.Repository
             using (var command=_context.CreateCommand())
             {
                 command.CommandText = "exec [dbo].[uspGetUsers]";
-                return this.Tolist(command).ToList();
+
+                return Tolist(command).ToList();
             }
         }
 
@@ -33,26 +34,28 @@ namespace DataAccessLayer.Repository
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandText = "uspSignUp";
+
                 command.Parameters.Add(command.CreateParameter("@pFirstName", user.FirstName));
-                command.Parameters.Add(command.CreateParameter("@pLastName", user.LastName));
-                command.Parameters.Add(command.CreateParameter("@pUserName", user.UserName));
-                command.Parameters.Add(command.CreateParameter("@pPassword", user.Password));
-                command.Parameters.Add(command.CreateParameter("@pEmail", user.Email));
-                return this.Tolist(command).FirstOrDefault();
+                command.Parameters.Add(command.CreateParameter("@pLastName",  user.LastName));
+                command.Parameters.Add(command.CreateParameter("@pUserName",  user.UserName));
+                command.Parameters.Add(command.CreateParameter("@pPassword",  user.Password));
+                command.Parameters.Add(command.CreateParameter("@pEmail",     user.Email));
+
+                return Tolist(command).FirstOrDefault();
             }
         }
 
-        public User LoginUser(string id,string password)
+        public User LoginUser(string username,string password)
         {
             using (var command = _context.CreateCommand())
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.CommandText = "uspSignIn ";
+                command.CommandText = "uspSignIn";
 
-                command.Parameters.Add(command.CreateParameter("@pId", id));
+                command.Parameters.Add(command.CreateParameter("@pUserName", username));
                 command.Parameters.Add(command.CreateParameter("@pPassword", password));
 
-                return this.Tolist(command).FirstOrDefault();
+                return Tolist(command).FirstOrDefault();
             }
         }
 
@@ -66,7 +69,7 @@ namespace DataAccessLayer.Repository
                 command.Parameters.Add(command.CreateParameter("@pUserName",userName));
                 command.Parameters.Add(command.CreateParameter("@pEmail",email));
 
-                return this.Tolist(command).FirstOrDefault();
+                return Tolist(command).FirstOrDefault();
             }
         }
     }

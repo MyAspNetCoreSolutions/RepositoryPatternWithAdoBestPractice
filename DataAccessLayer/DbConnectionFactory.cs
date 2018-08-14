@@ -10,11 +10,13 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
-    class DbConnectionFactory : IConnectionFactory
+    public class DbConnectionFactory : IConnectionFactory
     {
+
         private readonly DbProviderFactory _dbProvider;
         private readonly string _conectionString;
         private readonly string _name;
+
         public DbConnectionFactory(string connectionName)
         {
             if (connectionName==null)
@@ -23,6 +25,7 @@ namespace DataAccessLayer
             }
 
             var conStr = ConfigurationManager.ConnectionStrings[connectionName];
+
             if (conStr==null)
             {
                 throw new ConfigurationErrorsException(
